@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O-unity Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>O-unity</h1>
+  </header>
+  <main>
+    <form id="login-form" class="admin-form">
+      <label>
+        Username
+        <input type="text" id="username" required autocomplete="username">
+      </label>
+      <label>
+        Password
+        <input type="password" id="password" required autocomplete="current-password">
+      </label>
+      <button type="submit">Log in</button>
+    </form>
+    <p id="login-status"></p>
+  </main>
+  <script src="auth.js"></script>
+  <script>
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const statusEl = document.getElementById("login-status");
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const passwordHash = await sha256Hex(password);
+
+      const match = USERS.find(u => u.username === username && u.passwordHash === passwordHash);
+      if (!match) {
+        statusEl.textContent = "Invalid username or password.";
+        return;
+      }
+
+      setSession(match.username, match.role);
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
