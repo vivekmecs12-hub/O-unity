@@ -4,8 +4,28 @@ body {
   color: #222;
 }
 
-header h1 {
+header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-bottom: 1rem;
+}
+
+header h1 {
+  margin: 0;
+}
+
+.login-header {
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+
+.logo {
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 50%;
 }
 
 table {
@@ -173,4 +193,27 @@ thead {
 #status {
   color: #666;
   font-style: italic;
+}
+
+@media (max-width: 600px) {
+  body {
+    margin: 1rem;
+  }
+
+  #tile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form {
+    max-width: 100%;
+  }
+
+  .logo {
+    max-width: 90px;
+    max-height: 90px;
+  }
+
+  header h1 {
+    font-size: 1.3rem;
+  }
 }
