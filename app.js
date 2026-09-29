@@ -1,5 +1,5 @@
-// Replace with your Google Sheet's published CSV URL (File > Share > Publish to web > CSV)
-const SHEET_CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_URL_HERE";
+// Google Sheet's published CSV URL (File > Share > Publish to web > CSV)
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-S3KDNMHf65kTEZTL-NyQlbHBz3Zb5He5EXFzFDp94ugeoE-k_ftRgL1lzbLDymNNb808Iuflm0fE/pub?output=csv";
 
 async function loadSheetData() {
   const statusEl = document.getElementById("status");
