@@ -1,16 +1,22 @@
+const battingSkillInput = document.getElementById("battingSkill");
+const bowlingSkillInput = document.getElementById("bowlingSkill");
+
+battingSkillInput.addEventListener("input", () => {
+  let batting = Number(battingSkillInput.value);
+  if (batting > 100) batting = 100;
+  if (batting < 0) batting = 0;
+  battingSkillInput.value = battingSkillInput.value === "" ? "" : batting;
+  bowlingSkillInput.value = battingSkillInput.value === "" ? "" : 100 - batting;
+});
+
 document.getElementById("player-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const statusEl = document.getElementById("admin-status");
 
   const firstName = document.getElementById("firstName").value.trim();
   const lastName = document.getElementById("lastName").value.trim();
-  const battingSkill = Number(document.getElementById("battingSkill").value);
-  const bowlingSkill = Number(document.getElementById("bowlingSkill").value);
-
-  if (battingSkill + bowlingSkill !== 100) {
-    statusEl.textContent = "Batting Skill + Bowling Skill must add up to 100.";
-    return;
-  }
+  const battingSkill = Number(battingSkillInput.value);
+  const bowlingSkill = Number(bowlingSkillInput.value);
 
   statusEl.textContent = "Saving...";
 
