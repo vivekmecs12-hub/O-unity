@@ -45,10 +45,18 @@ async function loadSheetData() {
         const pieStyle = `background: conic-gradient(#4f8ef7 0% ${battingPct}%, #f7a94f ${battingPct}% 100%);`;
         const playerId = row[playerIdIdx];
         const role = batting > 50 ? "Batsman" : bowling > 50 ? "Bowler" : "All Rounder";
-        const adminBtns = isAdmin
-          ? `<a class="edit-btn" href="admin.html?edit=${encodeURIComponent(playerId)}" title="Edit player">&#9998;</a>
-             <button class="delete-btn" title="Delete player">&times;</button>`
-          : "";
+        let adminBtns = "";
+        if (isAdmin) {
+          const editParams = new URLSearchParams({
+            edit: playerId,
+            firstName: firstNameIdx !== -1 ? row[firstNameIdx] : "",
+            lastName: lastNameIdx !== -1 ? row[lastNameIdx] : "",
+            battingSkill: batting,
+          });
+          adminBtns = `
+            <a class="edit-btn" href="admin.html?${editParams}" title="Edit player">&#9998;</a>
+            <button class="delete-btn" title="Delete player">&times;</button>`;
+        }
         return `
           <div class="tile" data-player-id="${escapeHTML(playerId)}">
             ${adminBtns}

@@ -55,16 +55,6 @@ thead {
   padding: 0;
 }
 
-.delete-btn:hover {
-  background: #f44336;
-  color: #fff;
-}
-
-.delete-btn:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
 .edit-btn {
   position: absolute;
   top: 0.4rem;
@@ -76,6 +66,7 @@ thead {
   background: #eee;
   color: #888;
   font-size: 0.9rem;
+  cursor: pointer;
   text-decoration: none;
   display: inline-block;
 }
@@ -83,6 +74,16 @@ thead {
 .edit-btn:hover {
   background: #4f8ef7;
   color: #fff;
+}
+
+.delete-btn:hover {
+  background: #f44336;
+  color: #fff;
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .tile h3 {

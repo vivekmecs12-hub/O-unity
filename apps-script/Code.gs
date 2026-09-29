@@ -18,8 +18,8 @@ function doPost(e) {
   if (data.action === "delete") {
     return handleDelete(data);
   }
-  if (data.action === "edit") {
-    return handleEdit(data);
+  if (data.action === "update") {
+    return handleUpdate(data);
   }
   return handleAdd(data);
 }
@@ -45,7 +45,22 @@ function handleAdd(data) {
   return jsonResponse({ success: true, id: newId });
 }
 
-function handleEdit(data) {
+function handleDelete(data) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var playerId = Number(data.playerId);
+  var values = sheet.getDataRange().getValues();
+
+  // values[0] is the header row; sheet rows are 1-indexed
+  for (var i = 1; i < values.length; i++) {
+    if (Number(values[i][0]) === playerId) {
+      sheet.deleteRow(i + 1);
+      return jsonResponse({ success: true });
+    }
+  }
+  return jsonResponse({ success: false, error: "Player not found." });
+}
+
+function handleUpdate(data) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var playerId = Number(data.playerId);
 
@@ -66,21 +81,6 @@ function handleEdit(data) {
   for (var i = 1; i < values.length; i++) {
     if (Number(values[i][0]) === playerId) {
       sheet.getRange(i + 1, 2, 1, 4).setValues([[firstName, lastName, batting, bowling]]);
-      return jsonResponse({ success: true });
-    }
-  }
-  return jsonResponse({ success: false, error: "Player not found." });
-}
-
-function handleDelete(data) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var playerId = Number(data.playerId);
-  var values = sheet.getDataRange().getValues();
-
-  // values[0] is the header row; sheet rows are 1-indexed
-  for (var i = 1; i < values.length; i++) {
-    if (Number(values[i][0]) === playerId) {
-      sheet.deleteRow(i + 1);
       return jsonResponse({ success: true });
     }
   }
