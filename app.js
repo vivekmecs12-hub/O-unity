@@ -1,5 +1,7 @@
 // Google Sheet's published CSV URL (File > Share > Publish to web > CSV)
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-S3KDNMHf65kTEZTL-NyQlbHBz3Zb5He5EXFzFDp94ugeoE-k_ftRgL1lzbLDymNNb808Iuflm0fE/pub?output=csv";
+// First column of the sheet ("Player ID") is used to identify a tile for deletion
+let playerIdIdx = 0;
 
 async function loadSheetData() {
   const statusEl = document.getElementById("status");
@@ -24,6 +26,8 @@ async function loadSheetData() {
     // Batting/Bowling Skill columns are rendered as a pie chart instead of text
     const battingIdx = headerRow.findIndex(h => /batting\s*skill/i.test(h));
     const bowlingIdx = headerRow.findIndex(h => /bowling\s*skill/i.test(h));
+    playerIdIdx = headerRow.findIndex(h => /player\s*id/i.test(h));
+    if (playerIdIdx === -1) playerIdIdx = 0;
 
     gridEl.innerHTML = bodyRows
       .map(row => {
@@ -33,8 +37,10 @@ async function loadSheetData() {
         const total = batting + bowling || 1;
         const battingPct = (batting / total) * 100;
         const pieStyle = `background: conic-gradient(#4f8ef7 0% ${battingPct}%, #f7a94f ${battingPct}% 100%);`;
+        const playerId = row[playerIdIdx];
         return `
-          <div class="tile">
+          <div class="tile" data-player-id="${escapeHTML(playerId)}">
+            <button class="delete-btn" title="Delete player">&times;</button>
             <h3>${escapeHTML(title)}</h3>
             <div class="pie" style="${pieStyle}" title="Batting ${batting}% / Bowling ${bowling}%"></div>
             <div class="legend">
@@ -50,6 +56,33 @@ async function loadSheetData() {
     statusEl.textContent = `Failed to load data: ${err.message}`;
   }
 }
+
+document.getElementById("tile-grid").addEventListener("click", async (event) => {
+  const btn = event.target.closest(".delete-btn");
+  if (!btn) return;
+
+  const tile = btn.closest(".tile");
+  const playerId = tile.dataset.playerId;
+  const name = tile.querySelector("h3").textContent;
+
+  if (!confirm(`Delete ${name}? This removes them from the Google Sheet too.`)) return;
+
+  btn.disabled = true;
+  try {
+    // no-cors: Apps Script doesn't send CORS headers on POST responses, so the
+    // reply can't be read here, but the sheet deletion still completes server-side.
+    await fetch(ADMIN_ENDPOINT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "delete", playerId }),
+    });
+    tile.remove();
+  } catch (err) {
+    document.getElementById("status").textContent = `Failed to delete: ${err.message}`;
+    btn.disabled = false;
+  }
+});
 
 // Minimal CSV parser handling quoted fields and commas within quotes
 function parseCSV(text) {

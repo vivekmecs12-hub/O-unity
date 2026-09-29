@@ -7,8 +7,16 @@
 // Expected sheet columns (row 1 headers): Player ID | Player First name | Player Last Name | Batting Skill | Bowling Skill
 
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var data = JSON.parse(e.postData.contents);
+
+  if (data.action === "delete") {
+    return handleDelete(data);
+  }
+  return handleAdd(data);
+}
+
+function handleAdd(data) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
   var firstName = (data.firstName || "").toString().trim();
   var lastName = (data.lastName || "").toString().trim();
@@ -26,6 +34,21 @@ function doPost(e) {
   sheet.appendRow([newId, firstName, lastName, batting, bowling]);
 
   return jsonResponse({ success: true, id: newId });
+}
+
+function handleDelete(data) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var playerId = Number(data.playerId);
+  var values = sheet.getDataRange().getValues();
+
+  // values[0] is the header row; sheet rows are 1-indexed
+  for (var i = 1; i < values.length; i++) {
+    if (Number(values[i][0]) === playerId) {
+      sheet.deleteRow(i + 1);
+      return jsonResponse({ success: true });
+    }
+  }
+  return jsonResponse({ success: false, error: "Player not found." });
 }
 
 function jsonResponse(obj) {

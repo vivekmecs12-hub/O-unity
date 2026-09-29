@@ -1,6 +1,3 @@
-// Paste the Apps Script Web App URL here after deploying apps-script/Code.gs
-const ADMIN_ENDPOINT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
-
 document.getElementById("player-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const statusEl = document.getElementById("admin-status");
@@ -18,20 +15,17 @@ document.getElementById("player-form").addEventListener("submit", async (event) 
   statusEl.textContent = "Saving...";
 
   try {
-    // text/plain avoids a CORS preflight request that Apps Script web apps don't support
-    const response = await fetch(ADMIN_ENDPOINT_URL, {
+    // no-cors: Apps Script doesn't send CORS headers on POST responses, so the
+    // reply can't be read here, but the sheet write still completes server-side.
+    await fetch(ADMIN_ENDPOINT_URL, {
       method: "POST",
+      mode: "no-cors",
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ firstName, lastName, battingSkill, bowlingSkill }),
     });
-    const result = await response.json();
 
-    if (result.success) {
-      statusEl.textContent = `Added ${firstName} ${lastName} (Player ID ${result.id}).`;
-      event.target.reset();
-    } else {
-      statusEl.textContent = result.error || "Failed to add player.";
-    }
+    statusEl.textContent = `Added ${firstName} ${lastName}. Refresh the players page to see it.`;
+    event.target.reset();
   } catch (err) {
     statusEl.textContent = `Failed to add player: ${err.message}`;
   }

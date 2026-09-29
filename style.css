@@ -36,6 +36,33 @@ thead {
   background: #fafafa;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   text-align: center;
+  position: relative;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border: none;
+  border-radius: 50%;
+  background: #eee;
+  color: #888;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.delete-btn:hover {
+  background: #f44336;
+  color: #fff;
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .tile h3 {
