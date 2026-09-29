@@ -3,7 +3,10 @@ let playerIdIdx = 0;
 
 const session = requireLogin();
 const isAdmin = session && session.role === "admin";
-if (isAdmin) document.getElementById("add-player-link").hidden = false;
+if (isAdmin) {
+  document.getElementById("add-player-link").hidden = false;
+  document.getElementById("new-game-link").hidden = false;
+}
 document.getElementById("logout-link").addEventListener("click", (event) => {
   event.preventDefault();
   logout();

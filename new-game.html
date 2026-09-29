@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start the New Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Start the New Game</h1>
+    <p><a href="index.html">&larr; Back to players</a></p>
+  </header>
+  <main>
+    <div id="player-picker"></div>
+    <button id="start-game-btn" type="button">Start Game</button>
+    <div id="selected-team"></div>
+    <p id="game-status"></p>
+  </main>
+  <script src="auth.js"></script>
+  <script>requireAdmin();</script>
+  <script src="config.js"></script>
+  <script src="new-game.js"></script>
+</body>
+</html>
