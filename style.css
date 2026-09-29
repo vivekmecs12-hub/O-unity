@@ -23,6 +23,40 @@ thead {
   background: #f4f4f4;
 }
 
+#tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.tile {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fafafa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tile h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.tile dl {
+  margin: 0;
+}
+
+.tile dt {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.tile dd {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
 #status {
   color: #666;
   font-style: italic;

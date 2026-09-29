@@ -3,8 +3,7 @@ const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-S3KDNM
 
 async function loadSheetData() {
   const statusEl = document.getElementById("status");
-  const theadEl = document.querySelector("#data-table thead");
-  const tbodyEl = document.querySelector("#data-table tbody");
+  const gridEl = document.getElementById("tile-grid");
 
   try {
     const response = await fetch(SHEET_CSV_URL);
@@ -18,9 +17,19 @@ async function loadSheetData() {
     }
 
     const [headerRow, ...bodyRows] = rows;
-    theadEl.innerHTML = `<tr>${headerRow.map(h => `<th>${escapeHTML(h)}</th>`).join("")}</tr>`;
-    tbodyEl.innerHTML = bodyRows
-      .map(row => `<tr>${row.map(cell => `<td>${escapeHTML(cell)}</td>`).join("")}</tr>`)
+    // "Player First name" + "Player Last Name" columns form the tile title; the rest become label/value pairs
+    const firstNameIdx = headerRow.findIndex(h => /first\s*name/i.test(h));
+    const lastNameIdx = headerRow.findIndex(h => /last\s*name/i.test(h));
+    const titleIdxs = [firstNameIdx, lastNameIdx].filter(i => i !== -1);
+
+    gridEl.innerHTML = bodyRows
+      .map(row => {
+        const title = titleIdxs.map(i => row[i]).join(" ") || row[0] || "";
+        const fields = headerRow
+          .map((label, i) => (titleIdxs.includes(i) ? "" : `<dt>${escapeHTML(label)}</dt><dd>${escapeHTML(row[i] ?? "")}</dd>`))
+          .join("");
+        return `<div class="tile"><h3>${escapeHTML(title)}</h3><dl>${fields}</dl></div>`;
+      })
       .join("");
 
     statusEl.textContent = "";
