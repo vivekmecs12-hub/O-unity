@@ -45,12 +45,15 @@ async function loadSheetData() {
         const pieStyle = `background: conic-gradient(#4f8ef7 0% ${battingPct}%, #f7a94f ${battingPct}% 100%);`;
         const playerId = row[playerIdIdx];
         const role = batting > 50 ? "Batsman" : bowling > 50 ? "Bowler" : "All Rounder";
+        const firstName = firstNameIdx !== -1 ? row[firstNameIdx] : "";
+        const lastName = lastNameIdx !== -1 ? row[lastNameIdx] : "";
+        const initials = `${(firstName[0] || "").toUpperCase()}${(lastName[0] || "").toUpperCase()}`;
         let adminBtns = "";
         if (isAdmin) {
           const editParams = new URLSearchParams({
             edit: playerId,
-            firstName: firstNameIdx !== -1 ? row[firstNameIdx] : "",
-            lastName: lastNameIdx !== -1 ? row[lastNameIdx] : "",
+            firstName,
+            lastName,
             battingSkill: batting,
           });
           adminBtns = `
@@ -62,7 +65,9 @@ async function loadSheetData() {
             ${adminBtns}
             <h3>${escapeHTML(title)}</h3>
             <p class="role">${role}</p>
-            <div class="pie" style="${pieStyle}" title="Batting ${batting}% / Bowling ${bowling}%"></div>
+            <div class="pie" style="${pieStyle}" title="Batting ${batting}% / Bowling ${bowling}%">
+              <span class="pie-initials">${escapeHTML(initials)}</span>
+            </div>
             <div class="legend">
               <span><i class="swatch batting"></i>Batting ${batting}%</span>
               <span><i class="swatch bowling"></i>Bowling ${bowling}%</span>
