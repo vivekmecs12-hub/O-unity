@@ -35,26 +35,48 @@ thead {
   padding: 1rem;
   background: #fafafa;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
 .tile h3 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.75rem;
   font-size: 1.1rem;
 }
 
-.tile dl {
-  margin: 0;
+.pie {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto 0.75rem;
 }
 
-.tile dt {
-  font-size: 0.75rem;
-  color: #888;
-  text-transform: uppercase;
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: #444;
 }
 
-.tile dd {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.swatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.swatch.batting {
+  background: #4f8ef7;
+}
+
+.swatch.bowling {
+  background: #f7a94f;
 }
 
 #status {

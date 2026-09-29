@@ -17,18 +17,31 @@ async function loadSheetData() {
     }
 
     const [headerRow, ...bodyRows] = rows;
-    // "Player First name" + "Player Last Name" columns form the tile title; the rest become label/value pairs
+    // "Player First name" + "Player Last Name" columns form the tile title
     const firstNameIdx = headerRow.findIndex(h => /first\s*name/i.test(h));
     const lastNameIdx = headerRow.findIndex(h => /last\s*name/i.test(h));
     const titleIdxs = [firstNameIdx, lastNameIdx].filter(i => i !== -1);
+    // Batting/Bowling Skill columns are rendered as a pie chart instead of text
+    const battingIdx = headerRow.findIndex(h => /batting\s*skill/i.test(h));
+    const bowlingIdx = headerRow.findIndex(h => /bowling\s*skill/i.test(h));
 
     gridEl.innerHTML = bodyRows
       .map(row => {
         const title = titleIdxs.map(i => row[i]).join(" ") || row[0] || "";
-        const fields = headerRow
-          .map((label, i) => (titleIdxs.includes(i) ? "" : `<dt>${escapeHTML(label)}</dt><dd>${escapeHTML(row[i] ?? "")}</dd>`))
-          .join("");
-        return `<div class="tile"><h3>${escapeHTML(title)}</h3><dl>${fields}</dl></div>`;
+        const batting = Number(row[battingIdx]) || 0;
+        const bowling = Number(row[bowlingIdx]) || 0;
+        const total = batting + bowling || 1;
+        const battingPct = (batting / total) * 100;
+        const pieStyle = `background: conic-gradient(#4f8ef7 0% ${battingPct}%, #f7a94f ${battingPct}% 100%);`;
+        return `
+          <div class="tile">
+            <h3>${escapeHTML(title)}</h3>
+            <div class="pie" style="${pieStyle}" title="Batting ${batting}% / Bowling ${bowling}%"></div>
+            <div class="legend">
+              <span><i class="swatch batting"></i>Batting ${batting}%</span>
+              <span><i class="swatch bowling"></i>Bowling ${bowling}%</span>
+            </div>
+          </div>`;
       })
       .join("");
 
