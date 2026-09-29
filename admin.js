@@ -1,12 +1,14 @@
 const battingSkillInput = document.getElementById("battingSkill");
 const bowlingSkillInput = document.getElementById("bowlingSkill");
+const battingSkillValue = document.getElementById("battingSkillValue");
+const bowlingSkillValue = document.getElementById("bowlingSkillValue");
 
 battingSkillInput.addEventListener("input", () => {
-  let batting = Number(battingSkillInput.value);
-  if (batting > 100) batting = 100;
-  if (batting < 0) batting = 0;
-  battingSkillInput.value = battingSkillInput.value === "" ? "" : batting;
-  bowlingSkillInput.value = battingSkillInput.value === "" ? "" : 100 - batting;
+  const batting = Number(battingSkillInput.value);
+  const bowling = 100 - batting;
+  bowlingSkillInput.value = bowling;
+  battingSkillValue.textContent = batting;
+  bowlingSkillValue.textContent = bowling;
 });
 
 document.getElementById("player-form").addEventListener("submit", async (event) => {
@@ -32,6 +34,7 @@ document.getElementById("player-form").addEventListener("submit", async (event) 
 
     statusEl.textContent = `Added ${firstName} ${lastName}. Refresh the players page to see it.`;
     event.target.reset();
+    battingSkillInput.dispatchEvent(new Event("input"));
   } catch (err) {
     statusEl.textContent = `Failed to add player: ${err.message}`;
   }

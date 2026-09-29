@@ -22,12 +22,12 @@
         <input type="text" id="lastName" required>
       </label>
       <label>
-        Batting Skill (%)
-        <input type="number" id="battingSkill" min="0" max="100" required>
+        Batting Skill (%): <span id="battingSkillValue">50</span>
+        <input type="range" id="battingSkill" min="0" max="100" value="50">
       </label>
       <label>
-        Bowling Skill (%)
-        <input type="number" id="bowlingSkill" min="0" max="100" readonly>
+        Bowling Skill (%): <span id="bowlingSkillValue">50</span>
+        <input type="range" id="bowlingSkill" min="0" max="100" value="50" disabled>
       </label>
       <button type="submit">Add Player</button>
     </form>
