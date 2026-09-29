@@ -1,5 +1,3 @@
-// Google Sheet's published CSV URL (File > Share > Publish to web > CSV)
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-S3KDNMHf65kTEZTL-NyQlbHBz3Zb5He5EXFzFDp94ugeoE-k_ftRgL1lzbLDymNNb808Iuflm0fE/pub?output=csv";
 // First column of the sheet ("Player ID") is used to identify a tile for deletion
 let playerIdIdx = 0;
 
@@ -16,17 +14,17 @@ async function loadSheetData() {
   const gridEl = document.getElementById("tile-grid");
 
   try {
-    const response = await fetch(SHEET_CSV_URL);
+    // Reads live from the Sheet via Apps Script (doGet), no publish/caching delay
+    const response = await fetch(ADMIN_ENDPOINT_URL);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const csvText = await response.text();
-    const rows = parseCSV(csvText);
+    const data = await response.json();
+    const headerRow = data.headers;
+    const bodyRows = data.rows;
 
-    if (rows.length === 0) {
+    if (!headerRow || bodyRows.length === 0) {
       statusEl.textContent = "No data found.";
       return;
     }
-
-    const [headerRow, ...bodyRows] = rows;
     // "Player First name" + "Player Last Name" columns form the tile title
     const firstNameIdx = headerRow.findIndex(h => /first\s*name/i.test(h));
     const lastNameIdx = headerRow.findIndex(h => /last\s*name/i.test(h));
@@ -93,55 +91,9 @@ document.getElementById("tile-grid").addEventListener("click", async (event) => 
   }
 });
 
-// Minimal CSV parser handling quoted fields and commas within quotes
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let field = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const next = text[i + 1];
-
-    if (inQuotes) {
-      if (char === '"' && next === '"') {
-        field += '"';
-        i++;
-      } else if (char === '"') {
-        inQuotes = false;
-      } else {
-        field += char;
-      }
-    } else {
-      if (char === '"') {
-        inQuotes = true;
-      } else if (char === ",") {
-        row.push(field);
-        field = "";
-      } else if (char === "\n" || char === "\r") {
-        if (field !== "" || row.length > 0) {
-          row.push(field);
-          rows.push(row);
-          row = [];
-          field = "";
-        }
-        if (char === "\r" && next === "\n") i++;
-      } else {
-        field += char;
-      }
-    }
-  }
-  if (field !== "" || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
-  return rows.filter(r => r.length > 1 || r[0] !== "");
-}
-
-function escapeHTML(str) {
+function escapeHTML(value) {
   const div = document.createElement("div");
-  div.textContent = str;
+  div.textContent = value ?? "";
   return div.innerHTML;
 }
 

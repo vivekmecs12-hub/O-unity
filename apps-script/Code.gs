@@ -2,9 +2,15 @@
 // Then deploy: Deploy > New deployment > Type "Web app"
 //   Execute as: Me
 //   Who has access: Anyone
-// Copy the resulting Web App URL into admin.js (ADMIN_ENDPOINT_URL).
+// Copy the resulting Web App URL into config.js (ADMIN_ENDPOINT_URL).
 //
 // Expected sheet columns (row 1 headers): Player ID | Player First name | Player Last Name | Batting Skill | Bowling Skill
+
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var values = sheet.getDataRange().getValues();
+  return jsonResponse({ headers: values[0], rows: values.slice(1) });
+}
 
 function doPost(e) {
   var data = JSON.parse(e.postData.contents);
