@@ -45,10 +45,13 @@ async function loadSheetData() {
         const pieStyle = `background: conic-gradient(#4f8ef7 0% ${battingPct}%, #f7a94f ${battingPct}% 100%);`;
         const playerId = row[playerIdIdx];
         const role = batting > 50 ? "Batsman" : bowling > 50 ? "Bowler" : "All Rounder";
-        const deleteBtn = isAdmin ? `<button class="delete-btn" title="Delete player">&times;</button>` : "";
+        const adminBtns = isAdmin
+          ? `<a class="edit-btn" href="admin.html?edit=${encodeURIComponent(playerId)}" title="Edit player">&#9998;</a>
+             <button class="delete-btn" title="Delete player">&times;</button>`
+          : "";
         return `
           <div class="tile" data-player-id="${escapeHTML(playerId)}">
-            ${deleteBtn}
+            ${adminBtns}
             <h3>${escapeHTML(title)}</h3>
             <p class="role">${role}</p>
             <div class="pie" style="${pieStyle}" title="Batting ${batting}% / Bowling ${bowling}%"></div>

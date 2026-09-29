@@ -65,6 +65,26 @@ thead {
   cursor: default;
 }
 
+.edit-btn {
+  position: absolute;
+  top: 0.4rem;
+  right: 2.1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border-radius: 50%;
+  background: #eee;
+  color: #888;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.edit-btn:hover {
+  background: #4f8ef7;
+  color: #fff;
+}
+
 .tile h3 {
   margin: 0 0 0.75rem;
   font-size: 1.1rem;

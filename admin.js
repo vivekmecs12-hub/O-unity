@@ -22,6 +22,41 @@ battingSkillInput.addEventListener("input", () => {
   bowlingSkillValue.textContent = bowling;
 });
 
+// If ?edit=<playerId> is present, load that player's data and switch the form to edit mode
+const editPlayerId = new URLSearchParams(window.location.search).get("edit");
+
+async function loadPlayerForEdit() {
+  const statusEl = document.getElementById("admin-status");
+  try {
+    const response = await fetch(ADMIN_ENDPOINT_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+
+    const firstNameIdx = data.headers.findIndex(h => /first\s*name/i.test(h));
+    const lastNameIdx = data.headers.findIndex(h => /last\s*name/i.test(h));
+    const battingIdx = data.headers.findIndex(h => /batting\s*skill/i.test(h));
+    const idIdx = data.headers.findIndex(h => /player\s*id/i.test(h));
+
+    const row = data.rows.find(r => String(r[idIdx]) === String(editPlayerId));
+    if (!row) {
+      statusEl.textContent = "Player not found.";
+      return;
+    }
+
+    document.getElementById("page-heading").textContent = "O-unity Admin — Edit Player";
+    firstNameInput.value = row[firstNameIdx];
+    lastNameInput.value = row[lastNameIdx];
+    battingSkillInput.value = row[battingIdx];
+    battingSkillInput.dispatchEvent(new Event("input"));
+    submitBtn.textContent = "Update Player";
+    updateSubmitState();
+  } catch (err) {
+    statusEl.textContent = `Failed to load player: ${err.message}`;
+  }
+}
+
+if (editPlayerId) loadPlayerForEdit();
+
 document.getElementById("player-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const statusEl = document.getElementById("admin-status");
@@ -30,6 +65,9 @@ document.getElementById("player-form").addEventListener("submit", async (event) 
   const lastName = lastNameInput.value.trim();
   const battingSkill = Number(battingSkillInput.value);
   const bowlingSkill = Number(bowlingSkillInput.value);
+  const payload = editPlayerId
+    ? { action: "edit", playerId: editPlayerId, firstName, lastName, battingSkill, bowlingSkill }
+    : { firstName, lastName, battingSkill, bowlingSkill };
 
   statusEl.textContent = "Saving...";
 
@@ -40,14 +78,19 @@ document.getElementById("player-form").addEventListener("submit", async (event) 
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ firstName, lastName, battingSkill, bowlingSkill }),
+      body: JSON.stringify(payload),
     });
 
-    statusEl.textContent = `Added ${firstName} ${lastName}. Refresh the players page to see it.`;
-    event.target.reset();
-    battingSkillInput.dispatchEvent(new Event("input"));
-    updateSubmitState();
+    if (editPlayerId) {
+      statusEl.textContent = `Updated ${firstName} ${lastName}. Redirecting...`;
+      window.location.href = "index.html";
+    } else {
+      statusEl.textContent = `Added ${firstName} ${lastName}. Refresh the players page to see it.`;
+      event.target.reset();
+      battingSkillInput.dispatchEvent(new Event("input"));
+      updateSubmitState();
+    }
   } catch (err) {
-    statusEl.textContent = `Failed to add player: ${err.message}`;
+    statusEl.textContent = `Failed to save player: ${err.message}`;
   }
 });

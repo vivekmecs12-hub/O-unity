@@ -18,6 +18,9 @@ function doPost(e) {
   if (data.action === "delete") {
     return handleDelete(data);
   }
+  if (data.action === "edit") {
+    return handleEdit(data);
+  }
   return handleAdd(data);
 }
 
@@ -40,6 +43,33 @@ function handleAdd(data) {
   sheet.appendRow([newId, firstName, lastName, batting, bowling]);
 
   return jsonResponse({ success: true, id: newId });
+}
+
+function handleEdit(data) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var playerId = Number(data.playerId);
+
+  var firstName = (data.firstName || "").toString().trim();
+  var lastName = (data.lastName || "").toString().trim();
+  var batting = Number(data.battingSkill) || 0;
+  var bowling = Number(data.bowlingSkill) || 0;
+
+  if (!firstName || !lastName) {
+    return jsonResponse({ success: false, error: "First and last name are required." });
+  }
+  if (batting + bowling !== 100) {
+    return jsonResponse({ success: false, error: "Batting Skill + Bowling Skill must add up to 100." });
+  }
+
+  var values = sheet.getDataRange().getValues();
+  // values[0] is the header row; sheet rows are 1-indexed
+  for (var i = 1; i < values.length; i++) {
+    if (Number(values[i][0]) === playerId) {
+      sheet.getRange(i + 1, 2, 1, 4).setValues([[firstName, lastName, batting, bowling]]);
+      return jsonResponse({ success: true });
+    }
+  }
+  return jsonResponse({ success: false, error: "Player not found." });
 }
 
 function handleDelete(data) {
