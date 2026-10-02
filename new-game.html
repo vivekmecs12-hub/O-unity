@@ -11,11 +11,19 @@
     <h1>Start the New Game</h1>
     <p><a href="index.html">&larr; Back to players</a></p>
   </header>
-  <main>
-    <div id="player-picker"></div>
-    <button id="start-game-btn" type="button">Start Game</button>
-    <div id="selected-team"></div>
-    <p id="game-status"></p>
+  <main class="new-game-page">
+    <section class="roster-setup" aria-labelledby="roster-title">
+      <h2 id="roster-title">Choose players</h2>
+      <div id="player-picker" aria-label="Available players"></div>
+      <button id="start-game-btn" type="button" disabled>Start Game</button>
+      <p id="game-status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="selected-team" class="team-board" aria-labelledby="team-board-title" hidden>
+      <div class="team-board-heading">
+        <h2 id="team-board-title">Game teams</h2>
+      </div>
+      <div id="team-grid" class="team-grid"></div>
+    </section>
   </main>
   <script src="auth.js"></script>
   <script>requireAdmin();</script>
